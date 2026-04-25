@@ -12,10 +12,21 @@
     --color-terracotta: #C67B5C;
     --color-latte: #E8D5B7;
     --color-dark: #1A1110;
+
+    /* Default to Evening/Dark Theme */
+    --theme-bg: var(--color-dark);
+    --theme-text: var(--color-cream);
+  }
+  
+  .theme-morning {
+    --theme-bg: var(--color-cream);
+    --theme-text: var(--color-dark);
   }
   
   body {
-    @apply bg-[#1A1110] text-[#F5E6D3] overflow-x-hidden;
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+    @apply overflow-x-hidden transition-colors duration-1000 ease-in-out;
     font-family: 'Inter', system-ui, sans-serif;
   }
   

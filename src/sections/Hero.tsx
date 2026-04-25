@@ -2,7 +2,7 @@
 import React, { useRef, useMemo, Suspense } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Float, Environment, ContactShadows, Text3D, Center, OrbitControls } from '@react-three/drei'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useMotionValue, useSpring, HTMLMotionProps } from 'framer-motion'
 import { ChevronDown, Calendar, ShoppingBag, BookOpen } from 'lucide-react'
 import * as THREE from 'three'
 
@@ -45,13 +45,16 @@ function CoffeeSteam({ position }: { position: [number, number, number] }) {
   )
 }
 
-function FloatingCoffeeBean({ position, rotation }: { position: [number, number, number], rotation: [number, number, number] }) {
+function FloatingCoffeeBean({ position, rotation, scrollMultiplier = 2 }: { position: [number, number, number], rotation: [number, number, number], scrollMultiplier?: number }) {
   const meshRef = useRef<THREE.Mesh>(null)
+  const { scrollYProgress } = useScroll()
   
   useFrame((state) => {
     if (!meshRef.current) return
-    meshRef.current.rotation.y = state.clock.elapsedTime * 0.5
-    meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.2
+    const scrollY = scrollYProgress.get()
+    
+    meshRef.current.rotation.y = state.clock.elapsedTime * 0.5 + scrollY * 5
+    meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.2 + scrollY * scrollMultiplier
   })
 
   return (
@@ -66,10 +69,13 @@ function FloatingCoffeeBean({ position, rotation }: { position: [number, number,
 
 function CoffeeCup() {
   const cupRef = useRef<THREE.Group>(null)
+  const { scrollYProgress } = useScroll()
   
   useFrame((state) => {
     if (!cupRef.current) return
-    cupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1
+    const scrollY = scrollYProgress.get()
+    
+    cupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1 + scrollY * Math.PI * 2
   })
 
   return (
@@ -108,14 +114,49 @@ function Scene() {
       
       <CoffeeCup />
       
-      <FloatingCoffeeBean position={[-2, 1, -1]} rotation={[0.5, 0, 0.3]} />
-      <FloatingCoffeeBean position={[2.5, 0.5, -2]} rotation={[0.3, 0.5, 0]} />
-      <FloatingCoffeeBean position={[-1.5, 2, 1]} rotation={[0, 0.3, 0.5]} />
-      <FloatingCoffeeBean position={[1.5, 1.5, 2]} rotation={[0.5, 0.2, 0]} />
+      <FloatingCoffeeBean position={[-2, 1, -1]} rotation={[0.5, 0, 0.3]} scrollMultiplier={3} />
+      <FloatingCoffeeBean position={[2.5, 0.5, -2]} rotation={[0.3, 0.5, 0]} scrollMultiplier={1.5} />
+      <FloatingCoffeeBean position={[-1.5, 2, 1]} rotation={[0, 0.3, 0.5]} scrollMultiplier={4} />
+      <FloatingCoffeeBean position={[1.5, 1.5, 2]} rotation={[0.5, 0.2, 0]} scrollMultiplier={2.5} />
       
       <ContactShadows position={[0, -2, 0]} opacity={0.4} scale={10} blur={2} far={4} />
       <Environment preset="city" />
     </>
+  )
+}
+
+interface MagneticButtonProps extends HTMLMotionProps<"button"> {
+  children: React.ReactNode;
+}
+
+function MagneticButton({ children, ...props }: MagneticButtonProps) {
+  const ref = useRef<HTMLButtonElement>(null)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+
+  const springConfig = { damping: 15, stiffness: 150, mass: 0.1 }
+  const springX = useSpring(x, springConfig)
+  const springY = useSpring(y, springConfig)
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!ref.current) return
+    const { clientX, clientY } = e
+    const { height, width, left, top } = ref.current.getBoundingClientRect()
+    const middleX = clientX - (left + width / 2)
+    const middleY = clientY - (top + height / 2)
+    x.set(middleX * 0.3) // Magnetic pull strength
+    y.set(middleY * 0.3)
+  }
+
+  const handleMouseLeave = () => {
+    x.set(0)
+    y.set(0)
+  }
+
+  return (
+    <motion.button ref={ref} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} style={{ x: springX, y: springY }} {...props}>
+      {children}
+    </motion.button>
   )
 }
 
@@ -175,7 +216,7 @@ export default function Hero() {
             transition={{ duration: 1, delay: 1 }}
             className="flex flex-wrap gap-4"
           >
-            <motion.button
+            <MagneticButton
               whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(212, 175, 55, 0.3)' }}
               whileTap={{ scale: 0.95 }}
               onClick={() => scrollToSection('#booking')}
@@ -183,9 +224,9 @@ export default function Hero() {
             >
               <Calendar className="w-5 h-5" />
               Book a Table
-            </motion.button>
+            </MagneticButton>
             
-            <motion.button
+            <MagneticButton
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => scrollToSection('#order')}
@@ -193,9 +234,9 @@ export default function Hero() {
             >
               <ShoppingBag className="w-5 h-5" />
               Order Online
-            </motion.button>
+            </MagneticButton>
             
-            <motion.button
+            <MagneticButton
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => scrollToSection('#menu')}
@@ -203,7 +244,7 @@ export default function Hero() {
             >
               <BookOpen className="w-5 h-5" />
               Explore Menu
-            </motion.button>
+            </MagneticButton>
           </motion.div>
         </div>
 

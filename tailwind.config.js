@@ -15,6 +15,8 @@ export default {
         terracotta: '#C67B5C',
         latte: '#E8D5B7',
         dark: '#1A1110',
+        themeBg: 'var(--theme-bg)',
+        themeText: 'var(--theme-text)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
