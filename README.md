@@ -1,73 +1,96 @@
-# React + TypeScript + Vite
+# Brew & Bloom ☕️🌸
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, highly interactive web application for an artisan coffee shop and restaurant. This project provides a premium user experience featuring 3D elements, smooth animations, an online ordering system, and a table reservation flow.
 
-Currently, two official plugins are available:
+## 🌟 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Immersive 3D Hero Section**: Uses React Three Fiber to render floating 3D coffee elements (cups, beans, steam) right on the landing page.
+- **Interactive Menu & Ordering**: A beautifully categorized menu with "Add to Cart" functionality, complete with variants and add-ons.
+- **Table Reservations**: A multi-step booking system allowing users to select dates, times, guests, and specific seating areas (e.g., Rooftop, Private Corner).
+- **Global State Management**: A custom React Context setup handling the shopping cart, user authentication state, and UI toggles (drawers/modals).
+- **Animated UI**: Extensive use of Framer Motion for page transitions, hover effects, modal popups, and a special "Welcome Gift" surprise for first-time visitors.
+- **Authentication Flow**: A mock login/signup modal designed to seamlessly integrate with a backend auth service later.
+- **Responsive Design**: Fully mobile-responsive layouts built with Tailwind CSS.
 
-## React Compiler
+## 🚀 Tech Stack & Packages
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This project is built with a modern React ecosystem:
 
-## Expanding the ESLint configuration
+- **[React 18](https://reactjs.org/)** - Core frontend library
+- **[TypeScript](https://www.typescriptlang.org/)** - Static typing for robust code
+- **[Vite](https://vitejs.dev/)** - Next-generation frontend tooling and bundler
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework for rapid styling
+- **[Framer Motion](https://www.framer.com/motion/)** - Production-ready animation library for React
+- **[React Three Fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction)** & **[Drei](https://github.com/pmndrs/drei)** - React renderer for Three.js (used for the 3D Hero section)
+- **[Lucide React](https://lucide.dev/)** - Clean, customizable SVG icons
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📁 Project Structure
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+brew-and-bloom/
+├── public/               # Static assets (favicons, etc.)
+├── src/
+│   ├── components/       # Reusable UI components
+│   │   ├── AuthModal.tsx # Login/Signup popup
+│   │   ├── CartDrawer.tsx# Slide-out shopping cart
+│   │   └── Navbar.tsx    # Sticky navigation bar
+│   ├── sections/         # Main page sections
+│   │   ├── BookingSection.tsx  # Table reservation flow
+│   │   ├── BrandExperience.tsx # "Our Story" & stats
+│   │   ├── Footer.tsx          # Contact info & links
+│   │   ├── GiftExperience.tsx  # First-time visitor reward animation
+│   │   ├── Hero.tsx            # Landing section with 3D Canvas
+│   │   ├── MenuSection.tsx     # Display of popular items
+│   │   ├── OrderSection.tsx    # Full online ordering grid
+│   │   ├── Services.tsx        # Highlight of offerings (Delivery, Dine-in)
+│   │   └── Testimonials.tsx    # Customer reviews
+│   ├── App.tsx           # Main application layout and Global Context Provider
+│   ├── main.tsx          # React DOM rendering entry point
+│   └── index.css         # Tailwind directives and custom CSS variables
+├── index.html            # Main HTML template
+├── tailwind.config.js    # Tailwind configuration and custom theme colors
+└── package.json          # Project dependencies and scripts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🎨 Theme & Design System
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The project uses a custom color palette configured in Tailwind to give a warm, premium coffeehouse feel:
+- `espresso`: `#2C1810`
+- `coffee`: `#4A3728`
+- `cream`: `#F5E6D3`
+- `gold`: `#D4AF37`
+- `terracotta`: `#C67B5C`
+- `latte`: `#E8D5B7`
+- `dark`: `#1A1110`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 💻 Getting Started
+
+Follow these steps to run the project locally:
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/yourusername/brew-and-bloom.git
+cd brew-and-bloom
 ```
+
+### 2. Install dependencies
+Make sure you have Node.js installed, then run:
+```bash
+npm install
+# or
+yarn install
+```
+
+### 3. Run the development server
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+Open http://localhost:5173 in your browser to view the application.
+
+## 🛠 Future Enhancements
+- Connect Authentication to Firebase/Supabase
+- Integrate a payment gateway (e.g., Stripe) for the checkout flow
+- Add a backend database for real-time menu and table availability
