@@ -14,6 +14,7 @@ import Testimonials from './sections/Testimonials'
 import Footer from './sections/Footer'
 import AuthModal from './components/AuthModal'
 import CartDrawer from './components/CartDrawer'
+import CustomCursor from './components/CustomCursor'
 import { AnimatePresence } from 'framer-motion'
 
 // Context for global state
@@ -183,6 +184,7 @@ function App() {
       login, logout, openAuth, closeAuth, openCart, closeCart
     }}>
       <div className="relative min-h-screen bg-[#1A1110]">
+        <CustomCursor />
         <Navbar />
         
         <main>

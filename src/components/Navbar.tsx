@@ -1,7 +1,7 @@
 // src/components/Navbar.tsx (updated)
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Coffee, Menu, X, ShoppingBag, User, LogOut } from 'lucide-react'
+import { Coffee, Menu, X, ShoppingBag, User, LogOut, Volume2, VolumeX } from 'lucide-react'
 import { useApp } from '../App'
 
 const navLinks = [
@@ -17,6 +17,8 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const audioRef = useRef<HTMLAudioElement>(null)
   const { state, openAuth, logout, openCart } = useApp()
   
   const cartItemCount = state.cart.reduce((sum, item) => sum + item.quantity, 0)
@@ -33,6 +35,18 @@ export default function Navbar() {
     el?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const toggleAudio = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause()
+      } else {
+        audioRef.current.volume = 0.9 // Increased volume for better audibility
+        audioRef.current.play().catch(e => console.error('Audio play blocked by browser:', e))
+      }
+      setIsPlaying(!isPlaying)
+    }
+  }
+
   return (
     <>
       <motion.nav
@@ -43,6 +57,13 @@ export default function Navbar() {
           scrolled ? 'bg-[#1A1110]/90 backdrop-blur-xl border-b border-white/5' : 'bg-transparent'
         }`}
       >
+        {/* Hidden ambient audio element */}
+        <audio ref={audioRef} loop preload="auto">
+          {/* Primary high-quality OGG from Google */}
+          <source src="https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg" type="audio/ogg" />
+          {/* Fallback MP3 for Safari/iOS compatibility */}
+          <source src="https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3" type="audio/mpeg" />
+        </audio>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <motion.div 
             className="flex items-center gap-3 cursor-pointer"
@@ -73,6 +94,16 @@ export default function Navbar() {
           </div>
 
           <div className="hidden lg:flex items-center gap-4">
+            {/* Audio Toggle Button */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={toggleAudio}
+              className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-[#F5E6D3]/70 hover:text-[#D4AF37]"
+              title={isPlaying ? "Mute Atmosphere" : "Play Atmosphere"}
+            >
+              {isPlaying ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </motion.button>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
@@ -145,6 +176,19 @@ export default function Navbar() {
                   {link.label}
                 </motion.button>
               ))}
+              
+              {/* Mobile Audio Toggle */}
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: navLinks.length * 0.1 }}
+                onClick={toggleAudio}
+                className="flex items-center gap-3 mt-4 text-[#F5E6D3]/70 hover:text-[#D4AF37] transition-colors"
+              >
+                {isPlaying ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+                <span>{isPlaying ? 'Mute Atmosphere' : 'Play Atmosphere'}</span>
+              </motion.button>
+
               <motion.button
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

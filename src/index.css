@@ -26,10 +26,15 @@
   body {
     background-color: var(--theme-bg);
     color: var(--theme-text);
-    @apply overflow-x-hidden transition-colors duration-1000 ease-in-out;
+    @apply overflow-x-hidden transition-colors duration-1000 ease-in-out cursor-none;
     font-family: 'Inter', system-ui, sans-serif;
   }
   
+  /* Hide default cursor on interactive elements */
+  a, button, input, select, textarea {
+    @apply cursor-none;
+  }
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
