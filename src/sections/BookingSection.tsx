@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { Calendar, Clock, Users, MapPin, ChevronRight, Check } from 'lucide-react'
 import { useApp } from '../App'
+import InteractiveSeatingMap from '../components/InteractiveSeatingMap'
 
 const tableTypes = [
   { id: 'couple', name: 'Couple Table', icon: '💑', capacity: '2 People', description: 'Intimate setting for two' },
@@ -179,30 +180,10 @@ export default function BookingSection() {
                       <label className="block text-sm font-medium text-[#F5E6D3]/70 mb-3">
                         <MapPin className="w-4 h-4 inline mr-2" /> Select Table Type
                       </label>
-                      <div className="grid sm:grid-cols-2 gap-3">
-                        {tableTypes.map((table) => (
-                          <motion.button
-                            key={table.id}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => setFormData({ ...formData, tableType: table.id })}
-                            className={`p-4 rounded-xl border text-left transition-all ${
-                              formData.tableType === table.id
-                                ? 'border-[#D4AF37] bg-[#D4AF37]/10'
-                                : 'border-white/10 bg-white/5 hover:bg-white/10'
-                            }`}
-                          >
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <span className="text-2xl mb-2 block">{table.icon}</span>
-                                <h4 className="font-semibold text-[#F5E6D3]">{table.name}</h4>
-                                <p className="text-xs text-[#F5E6D3]/50 mt-1">{table.description}</p>
-                              </div>
-                              <span className="text-xs text-[#D4AF37] font-medium">{table.capacity}</span>
-                            </div>
-                          </motion.button>
-                        ))}
-                      </div>
+                      <InteractiveSeatingMap 
+                        selectedTable={formData.tableType || null} 
+                        onSelectTable={(id) => setFormData({ ...formData, tableType: id })} 
+                      />
                     </div>
 
                     <div>
@@ -267,7 +248,7 @@ export default function BookingSection() {
                             </div>
                             <div className="flex justify-between">
                               <span className="text-[#F5E6D3]/60">Table</span>
-                              <span className="font-medium">{tableTypes.find(t => t.id === formData.tableType)?.name}</span>
+                              <span className="font-medium">{tableTypes.find(t => t.id === formData.tableType)?.name || `Table ${formData.tableType}`}</span>
                             </div>
                             {formData.specialRequest && (
                               <div className="pt-3 border-t border-white/10">

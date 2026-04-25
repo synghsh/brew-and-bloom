@@ -1,7 +1,7 @@
 // src/components/Navbar.tsx (updated)
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Coffee, Menu, X, ShoppingBag, User, LogOut, Volume2, VolumeX } from 'lucide-react'
+import { Coffee, Menu, X, ShoppingBag, User, LogOut, Volume2, VolumeX, Star } from 'lucide-react'
 import { useApp } from '../App'
 
 const navLinks = [
@@ -19,7 +19,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
-  const { state, openAuth, logout, openCart } = useApp()
+  const { state, openAuth, logout, openCart, openRewards } = useApp()
   
   const cartItemCount = state.cart.reduce((sum, item) => sum + item.quantity, 0)
 
@@ -124,6 +124,15 @@ export default function Navbar() {
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={openRewards}
+                  className="p-2 rounded-full bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 text-[#D4AF37] transition-colors"
+                  title="Loyalty Rewards"
+                >
+                  <Star className="w-4 h-4" />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={logout}
                   className="p-2 rounded-full bg-white/5 hover:bg-red-500/20 text-red-400 transition-colors"
                 >
@@ -189,18 +198,39 @@ export default function Navbar() {
                 <span>{isPlaying ? 'Mute Atmosphere' : 'Play Atmosphere'}</span>
               </motion.button>
 
-              <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                onClick={() => {
-                  setMobileOpen(false)
-                  openAuth()
-                }}
-                className="mt-4 px-8 py-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#C67B5C] text-[#1A1110] font-bold"
-              >
-                Sign In
-              </motion.button>
+              {state.isAuthenticated ? (
+                <>
+                  <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: navLinks.length * 0.1 + 0.1 }}
+                    onClick={() => { setMobileOpen(false); openRewards(); }}
+                    className="flex items-center gap-3 mt-4 text-[#D4AF37] hover:text-[#C67B5C] transition-colors"
+                  >
+                    <Star className="w-5 h-5" />
+                    <span>Loyalty Rewards</span>
+                  </motion.button>
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                    onClick={() => { setMobileOpen(false); logout(); }}
+                    className="mt-4 px-8 py-3 rounded-full bg-red-500/20 text-red-400 font-bold"
+                  >
+                    Sign Out
+                  </motion.button>
+                </>
+              ) : (
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  onClick={() => { setMobileOpen(false); openAuth(); }}
+                  className="mt-4 px-8 py-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#C67B5C] text-[#1A1110] font-bold"
+                >
+                  Sign In
+                </motion.button>
+              )}
             </div>
           </motion.div>
         )}

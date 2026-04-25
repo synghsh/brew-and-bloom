@@ -1,8 +1,26 @@
 // src/sections/OrderSection.tsx (complete with proper imports)
 import React, { useState, useRef } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { ShoppingBag, Clock, MapPin, Home, Car, Package, ChevronRight, Minus, Plus, X, Check } from 'lucide-react'
+import { ShoppingBag, Clock, MapPin, Home, Car, Package, Minus, Plus, X, Check, Box } from 'lucide-react'
 import { useApp } from '../App'
+import '@google/model-viewer'
+
+// Extend TypeScript JSX to recognize the custom <model-viewer> web component
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'model-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+        src?: string;
+        'ios-src'?: string;
+        alt?: string;
+        ar?: boolean | string;
+        'ar-modes'?: string;
+        'camera-controls'?: boolean | string;
+        'auto-rotate'?: boolean | string;
+      };
+    }
+  }
+}
 
 const orderTypes = [
   { id: 'dinein', label: 'Dine-In', icon: Home, description: 'Eat at our restaurant' },
@@ -92,6 +110,7 @@ export default function OrderSection() {
   const [selectedVariant, setSelectedVariant] = useState('')
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
   const [quantity, setQuantity] = useState(1)
+  const [showAR, setShowAR] = useState(false)
 
   const filteredItems = activeCategory === 'All' 
     ? menuItems 
@@ -227,6 +246,7 @@ export default function OrderSection() {
                   setSelectedVariant(item.variants[0])
                   setSelectedAddOns([])
                   setQuantity(1)
+                  setShowAR(false)
                 }}
                 className="group cursor-pointer bg-gradient-to-b from-white/5 to-transparent rounded-2xl overflow-hidden border border-white/10 hover:border-[#D4AF37]/30 transition-all"
               >
@@ -276,9 +296,38 @@ export default function OrderSection() {
               className="bg-[#2C1810] rounded-3xl overflow-hidden max-w-lg w-full border border-white/10 max-h-[90vh] overflow-y-auto"
             >
               <div className="relative aspect-video">
-                <img src={selectedItem.image} alt={selectedItem.name} className="w-full h-full object-cover" />
+                {showAR ? (
+                  <model-viewer
+                    src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+                    ios-src="https://modelviewer.dev/shared-assets/models/Astronaut.usdz"
+                    alt={`A 3D model of ${selectedItem.name}`}
+                    ar="true"
+                    ar-modes="webxr scene-viewer quick-look"
+                    camera-controls="true"
+                    auto-rotate="true"
+                    style={{ width: '100%', height: '100%', backgroundColor: '#1A1110', display: 'block' }}
+                  >
+                    <button slot="ar-button" className="absolute bottom-4 right-4 bg-[#D4AF37] text-[#1A1110] px-4 py-2 rounded-full font-bold shadow-lg">
+                      👋 View in your space
+                    </button>
+                  </model-viewer>
+                ) : (
+                  <img src={selectedItem.image} alt={selectedItem.name} className="w-full h-full object-cover" />
+                )}
+                
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowAR(!showAR)}
+                  className="absolute bottom-4 left-4 px-4 py-2 rounded-full bg-[#1A1110]/80 backdrop-blur-md border border-[#D4AF37]/30 text-[#D4AF37] font-medium text-sm shadow-lg flex items-center gap-2 z-10"
+                >
+                  {showAR ? 'Hide 3D View' : (
+                    <><Box className="w-4 h-4" /> View in 3D / AR</>
+                  )}
+                </motion.button>
+
                 <button
-                  onClick={() => setSelectedItem(null)}
+                  onClick={() => { setSelectedItem(null); setShowAR(false); }}
                   className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors"
                 >
                   <X className="w-5 h-5" />

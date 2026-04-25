@@ -15,6 +15,7 @@ import Footer from './sections/Footer'
 import AuthModal from './components/AuthModal'
 import CartDrawer from './components/CartDrawer'
 import CustomCursor from './components/CustomCursor'
+import RewardsModal from './components/RewardsModal'
 import { AnimatePresence } from 'framer-motion'
 
 // Context for global state
@@ -27,6 +28,7 @@ interface AppState {
   showCart: boolean
   showGift: boolean
   hasSeenGift: boolean
+  showRewards: boolean
 }
 
 interface User {
@@ -54,6 +56,7 @@ const defaultState: AppState = {
   showCart: false,
   showGift: false,
   hasSeenGift: false,
+  showRewards: false,
 }
 
 const AppContext = createContext<{
@@ -68,6 +71,8 @@ const AppContext = createContext<{
   closeAuth: () => void
   openCart: () => void
   closeCart: () => void
+  openRewards: () => void
+  closeRewards: () => void
 }>({
   state: defaultState,
   setState: () => {},
@@ -80,6 +85,8 @@ const AppContext = createContext<{
   closeAuth: () => {},
   openCart: () => {},
   closeCart: () => {},
+  openRewards: () => {},
+  closeRewards: () => {},
 })
 
 export const useApp = () => useContext(AppContext)
@@ -168,6 +175,9 @@ function App() {
   const openCart = () => setState(prev => ({ ...prev, showCart: true }))
   const closeCart = () => setState(prev => ({ ...prev, showCart: false }))
 
+  const openRewards = () => setState(prev => ({ ...prev, showRewards: true }))
+  const closeRewards = () => setState(prev => ({ ...prev, showRewards: false }))
+
   // Show gift on first visit after 3 seconds
   useEffect(() => {
     if (!state.hasSeenGift && !state.showGift) {
@@ -181,7 +191,7 @@ function App() {
   return (
     <AppContext.Provider value={{
       state, setState, addToCart, removeFromCart, updateQuantity,
-      login, logout, openAuth, closeAuth, openCart, closeCart
+      login, logout, openAuth, closeAuth, openCart, closeCart, openRewards, closeRewards
     }}>
       <div className="relative min-h-screen bg-[#1A1110]">
         <CustomCursor />
@@ -203,6 +213,7 @@ function App() {
           {state.showAuth && <AuthModal />}
           {state.showCart && <CartDrawer />}
           {state.showGift && <GiftExperience />}
+          {state.showRewards && <RewardsModal />}
         </AnimatePresence>
       </div>
     </AppContext.Provider>

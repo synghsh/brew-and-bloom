@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/model-viewer": "^4.2.0",
     "@react-three/drei": "^9.92.0",
     "@react-three/fiber": "^8.15.0",
     "clsx": "^2.0.0",
@@ -17,7 +18,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.0.0",
-    "three": "^0.160.0"
+    "three": "^0.184.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
